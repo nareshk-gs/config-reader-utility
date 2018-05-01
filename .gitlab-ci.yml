@@ -1,0 +1,25 @@
+stages:
+  - build
+  - unit_tests
+  - release
+
+build:
+  stage: build
+  image: docker-remote.registry.kroger.com/gradle:3.5
+  script:
+    - ./gradlew clean build
+
+unit_tests:
+  stage: unit_tests
+  image: docker-remote.registry.kroger.com/gradle:3.5
+  script:
+    - ./gradlew test
+
+Release:
+  stage: release
+  image: docker-remote.registry.kroger.com/gradle:3.5
+  script:
+    - ./gradlew -Dorg.gradle.native=false clean build artifactoryPublish -P release
+  only:
+    - tags
+    - master
