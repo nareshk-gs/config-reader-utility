@@ -1,11 +1,12 @@
 package com.configreader.utils;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class PropertyConfig extends BaseConfig {
 
-    public static Properties properties;
     private static final String EXTENSION = ".properties";
 
 
@@ -19,25 +20,23 @@ public class PropertyConfig extends BaseConfig {
         mergeConfig(readConfig(BASIC));
     }
 
-    public Properties readConfig(String file) {
+    public Map<String, String> readConfig(String file) {
         String propertyFile = getPath() + file + EXTENSION;
         Properties localProperties = new Properties();
+        Map<String, String> map = new HashMap<>();
         try {
             InputStream input = new FileInputStream(new File(propertyFile));
             localProperties.load(input);
+            localProperties.forEach( (k,v) -> map.put((String)k, (String)v));
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return localProperties;
+        return map;
     }
-
-    private void mergeConfig(Properties props) {
-        props.forEach(properties::putIfAbsent);
-    }
-
-    public Properties getConfig() {
+    
+    public Map<String, String> getConfig() {
         return properties;
     }
 
